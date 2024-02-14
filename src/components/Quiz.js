@@ -4,7 +4,6 @@ import { QuizContex } from "../contex/quiz";
 
 const Quiz = () => {
   const [quizState, dispatch] = useContext(QuizContex);
-  // console.log("^^^^^", quizState);
 
   return (
     <div className="quiz">
@@ -13,7 +12,10 @@ const Quiz = () => {
           <div className="congratulations">Congratulations</div>
           <div className="results-info">
             <div>You have completed quiz.</div>
-            <div>You've got 4 of {quizState.questions.length}</div>
+            <div>
+              You've got {quizState.correctAnswerCount} of{" "}
+              {quizState.questions.length}
+            </div>
           </div>
           <div
             className="next-button"
