@@ -1,9 +1,25 @@
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import Question from "./Question";
-import { QuizContex } from "../contex/quiz";
+import { QuizContext } from "../contexts/quiz";
 
 const Quiz = () => {
-  const [quizState, dispatch] = useContext(QuizContex);
+  const [quizState, dispatch] = useContext(QuizContext);
+  const apiUrl =
+    "https://opentdb.com/api.php?amount=10&category=31&difficulty=easy&type=multiple&encode=url3986";
+
+  useEffect(() => {
+    if (quizState.questions.length > 0) {
+      return;
+    }
+    console.log("on initialize");
+
+    fetch(apiUrl)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log("data", data);
+        dispatch({ type: "LOADED_QUESTIONS", payload: data.results });
+      });
+  });
 
   return (
     <div className="quiz">
@@ -11,9 +27,9 @@ const Quiz = () => {
         <div className="results">
           <div className="congratulations">Congratulations</div>
           <div className="results-info">
-            <div>You have completed quiz.</div>
+            <div>You have completed the quiz.</div>
             <div>
-              You've got {quizState.correctAnswerCount} of{" "}
+              You've got {quizState.correctAnswersCount} of{" "}
               {quizState.questions.length}
             </div>
           </div>
@@ -21,11 +37,11 @@ const Quiz = () => {
             className="next-button"
             onClick={() => dispatch({ type: "RESTART" })}
           >
-            Restrt
+            Restart
           </div>
         </div>
       )}
-      {!quizState.showResults && (
+      {!quizState.showResults && quizState.questions.length > 0 && (
         <div>
           <div className="score">
             Question {quizState.currentQuestionIndex + 1}/
@@ -36,7 +52,7 @@ const Quiz = () => {
             className="next-button"
             onClick={() => dispatch({ type: "NEXT_QUESTION" })}
           >
-            Next Question
+            Next question
           </div>
         </div>
       )}
